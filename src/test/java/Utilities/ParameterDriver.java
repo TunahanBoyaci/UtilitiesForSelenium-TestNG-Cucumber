@@ -1,10 +1,17 @@
 package Utilities;
 
+import org.apache.commons.io.FileUtils;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
+import java.io.File;
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -32,6 +39,12 @@ public class ParameterDriver {
                     threadDriver.set(new EdgeDriver());
                     break;
                 default:
+//                    System.setProperty("webdriver.chrome.driver", "C:/Program Files/Google/Chrome/Application/chrome.exe");
+//                    ChromeOptions options = new ChromeOptions();
+//                    options.addArguments("--remote-allow-origins=*"); // To solve the error with Chrome v111
+//                    threadDriver.set(new ChromeDriver(options));
+//                    break;
+
                     threadDriver.set(new ChromeDriver());
                     break;
             }
@@ -58,5 +71,13 @@ public class ParameterDriver {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void takeScreenShot() throws IOException {
+        LocalDateTime localDateTime = LocalDateTime.now();
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("MM_dd_yyyy_hh_mm_ss_SSS");
+        TakesScreenshot takesScreenshot = (TakesScreenshot) ParameterDriver.getDriver();
+        File srcFile = takesScreenshot.getScreenshotAs(OutputType.FILE);
+        FileUtils.copyFile(srcFile, new File("screenShots/screenShot" + localDateTime.format(dateTimeFormatter) + ".png"));
     }
 }
