@@ -5,6 +5,7 @@ import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
@@ -45,7 +46,12 @@ public class ParameterDriver {
 //                    threadDriver.set(new ChromeDriver(options));
 //                    break;
 
-                    threadDriver.set(new ChromeDriver());
+                    ChromeOptions options = new ChromeOptions();
+                    if (!runningFromIntellij()) { // Run in memory again, but when Jenkins runs
+                        options.addArguments("--headless", "--disable-dev-shm-usage", "--disable-gpu", "--window-size=1400,2400");
+                    }
+                    threadDriver.set(new ChromeDriver(options));
+//                    threadDriver.set(new ChromeDriver());
                     break;
             }
             threadDriver.get().manage().window().maximize();
@@ -63,6 +69,11 @@ public class ParameterDriver {
             WebDriver driver = null;
             threadDriver.set(driver);
         }
+    }
+
+    public static boolean runningFromIntellij() {
+        String classPath = System.getProperty("java.class.path");
+        return classPath.contains("idea_rt.jar");
     }
 
     public static void closePreviousDrivers() {
